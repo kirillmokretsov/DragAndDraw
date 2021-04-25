@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.google.gson.Gson
+import org.json.JSONObject
 
 private const val TAG = "BoxDrawingView"
 private const val BUNDLE_PARENT = "bundleOfParent"
@@ -73,8 +74,11 @@ class BoxDrawingView(context: Context, attributeSet: AttributeSet? = null) :
             super.onRestoreInstanceState(parentState)
 
             val rawGson = state.getSerializable(BUNDLE_BOXEN) as String
-            Log.d(TAG, rawGson)
-            // TODO: parse rawGson to boxen
+            Log.d(TAG, "Get raw json: $rawGson")
+            val items = Gson().fromJson(rawGson, MutableList::class.java)
+            items.forEach { item ->
+                boxen.add(Gson().fromJson(item.toString(), Box::class.java))
+            }
         }
     }
 
