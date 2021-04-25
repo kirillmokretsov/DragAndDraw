@@ -53,8 +53,13 @@ class BoxDrawingView(context: Context, attributeSet: AttributeSet? = null) : Vie
         return true
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
+    override fun onDraw(canvas: Canvas) {
+        // Fill the background
+        canvas.drawPaint(backgroundPaint)
+
+        boxen.forEach { box ->
+            canvas.drawRect(box.left, box.top, box.right, box.bottom, boxPaint)
+        }
     }
 
     private fun updateCurrentBox(current: PointF) {
