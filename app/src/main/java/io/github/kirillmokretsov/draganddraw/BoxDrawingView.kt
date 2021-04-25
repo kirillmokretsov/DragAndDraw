@@ -20,7 +20,7 @@ class BoxDrawingView(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {
 
     private var currentBox: Box? = null
-    private val boxen = mutableListOf<Box>()
+    private var boxen = mutableListOf<Box>()
     private val boxPaint = Paint().apply {
         color = 0x22ff00000.toInt()
     }
@@ -54,18 +54,29 @@ class BoxDrawingView(context: Context, attributeSet: AttributeSet? = null) :
             }
         }
 
-        Log.i(TAG, "$action at x=${current.x}, y = ${current.y}")
+        Log.v(TAG, "$action at x=${current.x}, y = ${current.y}")
 
         return true
     }
 
     override fun onSaveInstanceState(): Bundle =
         Bundle().apply {
+            Log.d(TAG, "onSaveInstanceState()")
             putParcelable(BUNDLE_PARENT, super.onSaveInstanceState())
-            for (i in 0 until boxen.size) {
-                putSerializable(BUNDLE_BOXEN + i, Gson().toJson(boxen[i]))
-            }
+            putSerializable(BUNDLE_BOXEN, Gson().toJson(boxen))
         }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        Log.d(TAG, "onRestoreInstanceState()")
+        if (state is Bundle) {
+            val parentState: Parcelable? = state.getParcelable(BUNDLE_PARENT)
+            super.onRestoreInstanceState(parentState)
+
+            val rawGson = state.getSerializable(BUNDLE_BOXEN) as String
+            Log.d(TAG, rawGson)
+            // TODO: parse rawGson to boxen
+        }
+    }
 
 
     override fun onDraw(canvas: Canvas) {
